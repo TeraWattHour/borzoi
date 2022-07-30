@@ -14,7 +14,6 @@ Since Borzoi is currently in pre-alpha, expect changes that may completely chang
 - [x] Global properties
 - [x] Simple error handling
 - [x] Auto response body transforms
-- [x] Export documents as Markdown, HTML and PDF
 - [ ] Interceptors
 
 <br>
