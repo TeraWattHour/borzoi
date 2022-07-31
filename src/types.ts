@@ -1,53 +1,38 @@
 export type BorzoiInputOptions = {
-  url: string;
-  body?: any;
-  query?: URLSearchParams;
-  method?: HttpMethod | HttpMethodValue;
-  credentials?: RequestCredentials;
-  headers?: Map<string, string>;
-  ignoreResponseBody?: boolean;
-  bodyDecoder?: BorzoiDecoder;
-  redirect?: RequestRedirect;
-  keepalive?: boolean;
-  cache?: RequestCache;
-  integrity?: string;
-  mode?: RequestMode;
-  referrer?: string;
-  signal?: AbortSignal;
-  window?: null;
-};
+  query: UrlQuery;
+  headers: Map<string, string>;
+} & BorzoiBaseOptions;
 
 export type BorzoiOptions = {
-  url: string;
+  headers: Headers;
+} & BorzoiBaseOptions;
+
+type BorzoiBaseOptions = {
+  ignoreResponseBody: boolean;
+  bodyDecoder: BorzoiDecoder;
+
+  // fetch
   body: any;
-  method?: HttpMethod | HttpMethodValue;
-  credentials?: RequestCredentials;
-  headers?: Headers;
-  ignoreResponseBody?: boolean;
-  bodyDecoder?: BorzoiDecoder;
-  redirect?: RequestRedirect;
-  referrerPolicy?: ReferrerPolicy;
-  keepalive?: boolean;
-  mode?: RequestMode;
-  integrity?: string;
-  cache?: RequestCache;
-  referrer?: string;
-  signal?: AbortSignal;
-  window?: null;
+  method: HttpMethod;
+  credentials: RequestCredentials;
+  referrerPolicy: ReferrerPolicy;
+  redirect: RequestRedirect;
+  keepalive: boolean;
+  mode: RequestMode;
+  integrity: string;
+  cache: RequestCache;
+  referrer: string;
+  signal: AbortSignal;
+  window: null;
 };
 
-export enum HttpMethod {
-  GET = 'get',
-  POST = 'post',
-  DELETE = 'delete',
-  PATCH = 'patch',
-  PUT = 'put',
-  OPTIONS = 'options',
-  TRACE = 'trace',
-  CONNECT = 'connect',
-}
+export type UrlQuery =
+  | URLSearchParams
+  | {
+      [key: string]: string;
+    };
 
-export type HttpMethodValue = 'get' | 'post' | 'delete' | 'patch' | 'put' | 'options' | 'trace' | 'connect';
+export type HttpMethod = 'get' | 'post' | 'delete' | 'patch' | 'put' | 'options' | 'trace' | 'connect';
 
 export type BorzoiResponse = BorzoiResponseCompleted | BorzoiResponseInternalError;
 
@@ -56,6 +41,9 @@ export type BorzoiResponseInternalError = {
   refetch: () => Promise<BorzoiResponse>;
   internalError: true;
   ok: false;
+  info: {
+    url: string;
+  };
 };
 
 export type BorzoiResponseCompleted = {
@@ -71,3 +59,12 @@ export type BorzoiResponseCompleted = {
     responseType: ResponseType;
   };
 };
+
+export type BorzoiDecoder = 'json' | 'form-data' | 'blob' | 'text' | 'array-buffer';
+
+export type RequestInterceptor = (
+  url: string,
+  options?: Partial<BorzoiInputOptions>
+) => [string, Partial<BorzoiInputOptions> | undefined] | Promise<[string, Partial<BorzoiInputOptions> | undefined]>;
+
+export type ResponseInterceptor = (response: BorzoiResponse) => BorzoiResponse | Promise<BorzoiResponse>;

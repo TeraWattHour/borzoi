@@ -1,12 +1,13 @@
 import { IS_DEV } from '../consts';
 
 export const logger = {
+  timeString: () => new Date().toTimeString().slice(0, 8),
   warn: (message: string) => {
     if (!IS_DEV()) return;
-    console.warn(`🟧 [BORZOI WARN] (${new Date().getTime()}) ${message}`);
+    console.log(`🟧 [BORZOI WARN] (${logger.timeString()}) ${message}`);
   },
   error: (message: string) => {
     if (!IS_DEV()) return;
-    console.error(`🟥 [BORZOI ERROR] (${new Date().getTime()}) ${message}`);
+    console.log(`🟥 [BORZOI ERROR] (${logger.timeString()}) ${message}`);
   },
 };

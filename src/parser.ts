@@ -1,3 +1,4 @@
+import { BorzoiDecoder } from './types';
 import { logger } from './utils/logs';
 
 export const parseBody = async (

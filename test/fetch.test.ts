@@ -1,18 +1,29 @@
 import { borzoi, borzoiConfig } from '../src/index';
 
-test('fetches data from url', async () => {
-  const { data, ok } = await borzoi({
-    url: 'https://jsonplaceholder.typicode.com/todos/1',
+test('makes requests including global config', async () => {
+  borzoiConfig({
+    baseUrl: 'https://jsonplaceholder.typicode.com',
+    credentials: 'include',
+    headers: new Map([['string', 'global']]),
+  });
+
+  const { data, ok } = await borzoi('/todos/1', {
+    headers: new Map([['string', 'local']]),
   });
 
   expect(data).not.toBeNull();
   expect(ok).toBeTruthy();
 });
 
+test('fetches data from url', async () => {
+  const { data, ok } = await borzoi('https://jsonplaceholder.typicode.com/todos/1');
+
+  expect(data).not.toBeNull();
+  expect(ok).toBeTruthy();
+});
+
 test('can refetch request', async () => {
-  const { data, ok, refetch } = await borzoi({
-    url: 'https://jsonplaceholder.typicode.com/todos/2',
-  });
+  const { data, ok, refetch } = await borzoi('https://jsonplaceholder.typicode.com/todos/2');
 
   let d = data;
   expect(data).not.toBeNull();
@@ -24,22 +35,8 @@ test('can refetch request', async () => {
   expect(data2).toEqual(d);
 });
 
-test('makes requests including global config', async () => {
-  borzoiConfig({
-    baseUrl: 'https://jsonplaceholder.typicode.com',
-  });
-
-  const { data, ok } = await borzoi({
-    url: '/todos/1',
-  });
-
-  expect(data).not.toBeNull();
-  expect(ok).toBeTruthy();
-});
-
 test('encodes json data', async () => {
-  const { data, ok } = await borzoi({
-    url: '/posts',
+  const { data, ok } = await borzoi('/posts', {
     method: 'post',
     body: {
       title: 'foo',

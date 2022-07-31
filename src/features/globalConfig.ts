@@ -1,0 +1,36 @@
+import { BorzoiDecoder } from '../types';
+import { assureBorzoiGlobals } from '../utils/assureBorzoiGlobals';
+
+export type BorzoiGlobalConfig = {
+  baseUrl?: string;
+  credentials?: RequestCredentials;
+  bodyDecoder?: BorzoiDecoder;
+  headers?: Map<string, string>;
+};
+
+const allowedBorzoiGlobalConfigKeys = ['baseUrl', 'credentials', 'bodyDecoder', 'headers'];
+
+export const borzoiGlobalDefaults = ['credentials', 'bodyDecoder'];
+
+export const borzoiConfig = (options: BorzoiGlobalConfig) => {
+  const keys = Object.keys(options) as [keyof BorzoiGlobalConfig];
+
+  for (const key of keys) {
+    if (!allowedBorzoiGlobalConfigKeys.includes(key)) {
+      delete options[key];
+    }
+  }
+
+  assureBorzoiGlobals();
+  global.borzoi.options = options;
+};
+
+type PropType<T, V extends keyof T> = T[V];
+
+export const getBorzoiGlobalValue = (key: keyof BorzoiGlobalConfig): PropType<BorzoiGlobalConfig, typeof key> | null => {
+  return global?.borzoi?.options?.[key] || null;
+};
+
+export const getBorzoiGlobal = (): BorzoiGlobalConfig => {
+  return global?.borzoi?.options || null;
+};

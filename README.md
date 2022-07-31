@@ -10,11 +10,12 @@ Since Borzoi is currently in pre-alpha, expect changes that may completely chang
 
 ## Features
 
+- [x] Full Typescript documentation
 - [x] Auto JSON, URLSearchParams, FormData transforms
-- [x] Global properties
-- [x] Simple error handling
 - [x] Auto response body transforms
-- [ ] Interceptors
+- [x] Global defaults
+- [x] Simple error handling
+- [x] Interceptors
 
 <br>
 <br>
