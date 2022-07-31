@@ -54,6 +54,7 @@ console.log(data);
 ```
 
 <br>
+
 - Configuring globals:
 
 ```ts
@@ -98,6 +99,63 @@ const { data } = await borzoi({
 });
 
 // data was decoded as form-data
+console.log(data);
+```
+
+<br>
+
+- Adding response interceptors:
+
+```ts
+import { addBorzoiResponseInterceptor } from 'borzoi';
+
+addBorzoiResponseInterceptor(response => {
+  if (response.info.url === 'https://placekitten.com/') {
+    response.data = 'oh yeah';
+  }
+
+  return response;
+});
+
+const { data } = await borzoi('https://placekitten.com');
+
+// prints 'oh yeah'
+console.log(data);
+```
+
+Interceptors will run according to their registration order. Response interceptors have access to the response object value which they can change. Returned responses are passed to the next interceptors and eventually returned as the request response.
+
+<br>
+
+- Adding request interceptors:
+
+```ts
+import { addBorzoiRequestInterceptor } from 'borzoi';
+
+addBorzoiRequestInterceptor((url, options) => {
+  if (url === 'https://jsonplaceholder.typicode.com/posts') {
+    options = {
+      method: 'post',
+      body: {
+        title: 'foo',
+        body: 'bar',
+        userId: 1,
+      },
+    };
+  }
+
+  return [url, options];
+});
+
+const { data } = await borzoi('https://jsonplaceholder.typicode.com/posts');
+
+/* prints {
+ *   id: 101,
+ *   title: 'foo',
+ *   body: 'bar',
+ *   userId: 1
+ * }
+ */
 console.log(data);
 ```
 

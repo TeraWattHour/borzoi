@@ -1,7 +1,7 @@
-import { addRequestInterceptor, addResponseInterceptor, borzoi } from '../src';
+import { addBorzoiRequestInterceptor, addBorzoiResponseInterceptor, borzoi } from '../src/index';
 
 test('intercepts responses', async () => {
-  addResponseInterceptor(response => {
+  addBorzoiResponseInterceptor(response => {
     if (response.info.url === 'https://placekitten.com/') {
       response.data = 'oh yeah';
     }
@@ -15,7 +15,7 @@ test('intercepts responses', async () => {
 });
 
 test('intercepts request', async () => {
-  addRequestInterceptor((url, options) => {
+  addBorzoiRequestInterceptor((url, options) => {
     if (url === 'https://jsonplaceholder.typicode.com/posts') {
       options = {
         method: 'post',
