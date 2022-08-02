@@ -1,6 +1,6 @@
 export type BorzoiInputOptions = {
   query: UrlQuery;
-  headers: Map<string, string>;
+  headers: HeadersType;
 } & BorzoiBaseOptions;
 
 export type BorzoiOptions = {
@@ -61,6 +61,10 @@ export type BorzoiResponseCompleted = {
 };
 
 export type BorzoiDecoder = 'json' | 'form-data' | 'blob' | 'text' | 'array-buffer';
+
+export type HeadersType = {
+  [key: string]: string;
+};
 
 export type RequestInterceptor = (
   url: string,

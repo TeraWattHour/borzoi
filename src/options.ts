@@ -1,10 +1,11 @@
-import { BorzoiInputOptions, BorzoiOptions } from './types';
+import { BorzoiInputOptions, BorzoiOptions, HeadersType } from './types';
 import { applyDefaults } from './utils/applyDefaults';
 import { mergeHeadersWithDefaults } from './utils/mergeHeaders';
 
 export const makeOptions = (options?: Partial<BorzoiInputOptions>): Partial<BorzoiOptions> => {
   let headers = makeHeaders(options?.headers);
 
+  console.log(headers);
   let body = options?.body;
   if (body) {
     if (!headers.get('Content-Type')) {
@@ -27,15 +28,14 @@ export const makeOptions = (options?: Partial<BorzoiInputOptions>): Partial<Borz
   };
 };
 
-const makeHeaders = (headers: Map<string, string> | undefined): Headers => {
+const makeHeaders = (headers?: HeadersType): Headers => {
   const merged = mergeHeadersWithDefaults(headers);
 
   const x = new Headers();
-  if (!merged) return x;
 
-  merged.forEach((v, k) => {
-    x.append(k, v);
-  });
+  for (const [key, value] of Object.entries(merged)) {
+    x.set(key, value);
+  }
 
   return x;
 };

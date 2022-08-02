@@ -11,9 +11,7 @@ export const isValidUrl = (url: string) => {
 };
 
 export const makeUrl = (url: string, query?: UrlQuery): string => {
-  if (isValidUrl(url)) {
-    url = url;
-  } else {
+  if (!isValidUrl(url)) {
     let joinedUrl = (global.borzoi?.options?.baseUrl || '') + url;
     const t = new RegExp('^(?:[a-z+]+:)?//', 'i');
 

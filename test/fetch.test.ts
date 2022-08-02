@@ -4,11 +4,15 @@ test('makes requests including global config', async () => {
   borzoiConfig({
     baseUrl: 'https://jsonplaceholder.typicode.com',
     credentials: 'include',
-    headers: new Map([['string', 'global']]),
+    headers: {
+      string: 'global',
+    },
   });
 
   const { data, ok } = await borzoi('/todos/1', {
-    headers: new Map([['string', 'local']]),
+    headers: {
+      string: 'local',
+    },
   });
 
   expect(data).not.toBeNull();
@@ -47,4 +51,16 @@ test('encodes json data', async () => {
 
   expect(ok).toBeTruthy();
   expect(data).not.toBeNull();
+});
+
+test('sets headers', async () => {
+  const { ok } = await borzoi('http://localhost:8000/return-headers', {
+    method: 'get',
+    credentials: 'include',
+    headers: {
+      cookie: 'xyz',
+    },
+  });
+
+  expect(ok).toBeTruthy();
 });
