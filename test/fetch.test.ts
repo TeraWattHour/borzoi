@@ -34,8 +34,6 @@ test('sets query params', async () => {
     },
   });
 
-  console.log(info.url);
-
   expect(info.url).toEqual('https://jsonplaceholder.typicode.com/todos/1?query=query&q=1');
 });
 

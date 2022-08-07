@@ -44,8 +44,6 @@ const makeHeaders = (headers?: HeadersType): Headers => {
     }
   }
 
-  console.log(x);
-
   return x;
 };
 
