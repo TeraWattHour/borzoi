@@ -23,8 +23,22 @@ export const makeUrl = (url: string, query?: UrlQuery): string => {
   }
 
   if (query) {
-    const x = new URLSearchParams(query);
-    url += `?${x.toString()}`;
+    if (query instanceof URLSearchParams) {
+      url += `?${query.toString()}`;
+    } else {
+      const entries = Object.entries(query);
+      const x = new URLSearchParams();
+      for (const [k, v] of entries) {
+        const t = typeof v;
+        if (t === 'string') {
+          x.set(k, v as string);
+        }
+        if (t === 'number') {
+          x.set(k, (v as number).toString());
+        }
+      }
+      url += `?${x.toString()}`;
+    }
   }
 
   return url;

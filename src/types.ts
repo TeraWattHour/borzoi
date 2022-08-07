@@ -29,7 +29,7 @@ type BorzoiBaseOptions = {
 export type UrlQuery =
   | URLSearchParams
   | {
-      [key: string]: string;
+      [key: string]: string | undefined | null | number;
     };
 
 export type HttpMethod = 'get' | 'post' | 'delete' | 'patch' | 'put' | 'options' | 'trace' | 'connect';

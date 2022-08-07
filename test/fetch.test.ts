@@ -26,6 +26,19 @@ test('fetches data from url', async () => {
   expect(ok).toBeTruthy();
 });
 
+test('sets query params', async () => {
+  const { info } = await borzoi('https://jsonplaceholder.typicode.com/todos/1', {
+    query: {
+      query: 'query',
+      q: 1,
+    },
+  });
+
+  console.log(info.url);
+
+  expect(info.url).toEqual('https://jsonplaceholder.typicode.com/todos/1?query=query&q=1');
+});
+
 test('can refetch request', async () => {
   const { data, ok, refetch } = await borzoi('https://jsonplaceholder.typicode.com/todos/2');
 
@@ -51,22 +64,4 @@ test('encodes json data', async () => {
 
   expect(ok).toBeTruthy();
   expect(data).not.toBeNull();
-});
-
-test('sets headers', async () => {
-  const { ok, data } = await borzoi('http://localhost:8000/headers', {
-    method: 'get',
-    credentials: 'include',
-    headers: {
-      cookie: 'xyz',
-      nullHeader: undefined,
-      undefinedHeader: null,
-      numericHeader: 1,
-    },
-  });
-
-  expect(data).toBe({
-    cookie: 'xyz',
-  });
-  expect(ok).toBeTruthy();
 });
