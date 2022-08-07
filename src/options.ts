@@ -33,9 +33,18 @@ const makeHeaders = (headers?: HeadersType): Headers => {
   const x = new Headers();
 
   for (const [key, value] of Object.entries(merged)) {
-    if (typeof value !== 'string' && typeof value !== 'number') continue;
-    x.set(key, JSON.stringify(value));
+    const t = typeof value;
+    if (value === null || value === undefined || (t !== 'string' && t !== 'number')) continue;
+
+    if (t === 'number') {
+      x.set(key, (value as number).toString());
+    }
+    if (t === 'string') {
+      x.set(key, value as string);
+    }
   }
+
+  console.log(x);
 
   return x;
 };
