@@ -54,13 +54,19 @@ test('encodes json data', async () => {
 });
 
 test('sets headers', async () => {
-  const { ok } = await borzoi('http://localhost:8000/return-headers', {
+  const { ok, data } = await borzoi('http://localhost:8000/headers', {
     method: 'get',
     credentials: 'include',
     headers: {
       cookie: 'xyz',
+      nullHeader: undefined,
+      undefinedHeader: null,
+      numericHeader: 1,
     },
   });
 
+  expect(data).toBe({
+    cookie: 'xyz',
+  });
   expect(ok).toBeTruthy();
 });

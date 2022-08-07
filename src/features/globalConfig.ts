@@ -1,12 +1,5 @@
-import { BorzoiDecoder, HeadersType } from '../types';
+import { BorzoiGlobalConfig } from '../types';
 import { assureBorzoiGlobals } from '../utils/assureBorzoiGlobals';
-
-export type BorzoiGlobalConfig = {
-  baseUrl: string;
-  credentials: RequestCredentials;
-  bodyDecoder: BorzoiDecoder;
-  headers: HeadersType;
-};
 
 const allowedBorzoiGlobalConfigKeys = ['baseUrl', 'credentials', 'bodyDecoder', 'headers'];
 

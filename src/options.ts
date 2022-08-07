@@ -5,7 +5,6 @@ import { mergeHeadersWithDefaults } from './utils/mergeHeaders';
 export const makeOptions = (options?: Partial<BorzoiInputOptions>): Partial<BorzoiOptions> => {
   let headers = makeHeaders(options?.headers);
 
-  console.log(headers);
   let body = options?.body;
   if (body) {
     if (!headers.get('Content-Type')) {
@@ -34,7 +33,8 @@ const makeHeaders = (headers?: HeadersType): Headers => {
   const x = new Headers();
 
   for (const [key, value] of Object.entries(merged)) {
-    x.set(key, value);
+    if (typeof value !== 'string' && typeof value !== 'number') continue;
+    x.set(key, JSON.stringify(value));
   }
 
   return x;

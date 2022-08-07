@@ -63,7 +63,7 @@ export type BorzoiResponseCompleted = {
 export type BorzoiDecoder = 'json' | 'form-data' | 'blob' | 'text' | 'array-buffer';
 
 export type HeadersType = {
-  [key: string]: string;
+  [key: string]: string | null | undefined | number;
 };
 
 export type RequestInterceptor = (
@@ -72,3 +72,10 @@ export type RequestInterceptor = (
 ) => [string, Partial<BorzoiInputOptions> | undefined] | Promise<[string, Partial<BorzoiInputOptions> | undefined]>;
 
 export type ResponseInterceptor = (response: BorzoiResponse) => BorzoiResponse | Promise<BorzoiResponse>;
+
+export type BorzoiGlobalConfig = {
+  baseUrl: string;
+  credentials: RequestCredentials;
+  bodyDecoder: BorzoiDecoder;
+  headers: HeadersType;
+};
