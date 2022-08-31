@@ -1,55 +1,56 @@
 {
-  "version": "0.1.17",
-  "license": "MIT",
-  "main": "dist/index.js",
-  "typings": "dist/index.d.ts",
-  "files": [
-    "dist",
-    "src"
-  ],
-  "engines": {
-    "node": ">=10"
-  },
-  "scripts": {
-    "start": "tsdx watch",
-    "build": "tsdx build",
-    "test": "tsdx test",
-    "lint": "tsdx lint",
-    "size": "size-limit",
-    "local": "tsdx build && npm pack --pack-destination ~",
-    "analyze": "size-limit --why"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "tsdx lint"
-    }
-  },
-  "prettier": {
-    "printWidth": 130,
-    "semi": true,
-    "singleQuote": true,
-    "trailingComma": "es5",
-    "tabWidth": 4
-  },
-  "name": "borzoi",
-  "author": "TeraWattHour",
-  "module": "dist/borzoi.esm.js",
-  "size-limit": [
-    {
-      "path": "dist/borzoi.cjs.production.min.js",
-      "limit": "10 KB"
+    "version": "0.1.22",
+    "license": "MIT",
+    "main": "dist/index.js",
+    "description": "The simpliest data-fetching",
+    "typings": "dist/index.d.ts",
+    "files": [
+        "dist",
+        "src"
+    ],
+    "engines": {
+        "node": ">=10"
     },
-    {
-      "path": "dist/borzoi.esm.js",
-      "limit": "10 KB"
+    "scripts": {
+        "start": "tsdx watch",
+        "build": "tsdx build",
+        "test": "tsdx test",
+        "lint": "tsdx lint",
+        "size": "size-limit",
+        "local": "tsdx build && npm pack --pack-destination ~",
+        "analyze": "size-limit --why"
+    },
+    "husky": {
+        "hooks": {
+            "pre-commit": "tsdx lint"
+        }
+    },
+    "prettier": {
+        "printWidth": 130,
+        "semi": true,
+        "singleQuote": true,
+        "trailingComma": "es5",
+        "tabWidth": 4
+    },
+    "name": "borzoi",
+    "author": "TeraWattHour",
+    "module": "dist/borzoi.esm.js",
+    "size-limit": [
+        {
+            "path": "dist/borzoi.cjs.production.min.js",
+            "limit": "10 KB"
+        },
+        {
+            "path": "dist/borzoi.esm.js",
+            "limit": "10 KB"
+        }
+    ],
+    "devDependencies": {
+        "@size-limit/preset-small-lib": "^7.0.8",
+        "husky": "^8.0.1",
+        "size-limit": "^7.0.8",
+        "tsdx": "^0.14.1",
+        "tslib": "^2.4.0",
+        "typescript": "^3.9.10"
     }
-  ],
-  "devDependencies": {
-    "@size-limit/preset-small-lib": "^7.0.8",
-    "husky": "^8.0.1",
-    "size-limit": "^7.0.8",
-    "tsdx": "^0.14.1",
-    "tslib": "^2.4.0",
-    "typescript": "^3.9.10"
-  }
 }

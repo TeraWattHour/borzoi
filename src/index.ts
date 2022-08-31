@@ -60,3 +60,4 @@ export const borzoi = async (url: string, options?: Partial<BorzoiInputOptions>)
 
 export { borzoiConfig } from './features/globalConfig';
 export { addBorzoiRequestInterceptor, addBorzoiResponseInterceptor } from './features/interceptors';
+export * from './types';
