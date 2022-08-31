@@ -22,7 +22,7 @@ Since Borzoi is currently in pre-alpha, expect changes that may completely chang
 
 ## Installation
 
-Borzoi works anywhere, where Fetch API is present, or uses `isomorphic-fetch` npm library.
+Borzoi works anywhere where Fetch API is present. When using earlier versions of Node, install fetch polyfill.
 
 Install Borzoi using the following command:
 
