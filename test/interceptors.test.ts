@@ -1,41 +1,46 @@
-import { addBorzoiRequestInterceptor, addBorzoiResponseInterceptor, borzoi } from '../src/index';
+import 'isomorphic-fetch';
+import borzoi, { borzoiInterceptors } from '../src';
 
 test('intercepts responses', async () => {
-  addBorzoiResponseInterceptor(response => {
-    if (response.info.url === 'https://placekitten.com/') {
-      response.data = 'oh yeah';
-    }
+    borzoiInterceptors.response = [
+        (response) => {
+            if (response.url === 'https://placekitten.com/') {
+                response.data = 'oh yeah';
+            }
 
-    return response;
-  });
+            return response;
+        },
+    ];
 
-  const { data } = await borzoi('https://placekitten.com');
+    const { data } = await borzoi('https://placekitten.com');
 
-  expect(data).toBe('oh yeah');
+    expect(data).toBe('oh yeah');
 });
 
 test('intercepts request', async () => {
-  addBorzoiRequestInterceptor((url, options) => {
-    if (url === 'https://jsonplaceholder.typicode.com/posts') {
-      options = {
-        method: 'post',
-        body: {
-          title: 'foo',
-          body: 'bar',
-          userId: 1,
+    borzoiInterceptors.request = [
+        (url, options) => {
+            if (url === 'https://jsonplaceholder.typicode.com/posts') {
+                options = {
+                    method: 'post',
+                    body: {
+                        title: 'foo',
+                        body: 'bar',
+                        userId: 1,
+                    },
+                };
+            }
+
+            return [url, options];
         },
-      };
-    }
+    ];
 
-    return [url, options];
-  });
+    const { data } = await borzoi('https://jsonplaceholder.typicode.com/posts');
 
-  const { data } = await borzoi('https://jsonplaceholder.typicode.com/posts');
-
-  expect(data).toStrictEqual({
-    id: 101,
-    title: 'foo',
-    body: 'bar',
-    userId: 1,
-  });
+    expect(data).toStrictEqual({
+        id: 101,
+        title: 'foo',
+        body: 'bar',
+        userId: 1,
+    });
 });

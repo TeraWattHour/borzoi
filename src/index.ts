@@ -1,13 +1,22 @@
-import { BorzoiInputOptions, BorzoiResponse, RequestInterceptor, ResponseInterceptor } from './types';
-import { logger } from './utils/logs';
-import { makeOptions } from './options';
-import { parseBody } from './parser';
-import { makeUrl } from './utils/url';
+import { BorzoiInputOptions, BorzoiResponse } from './types';
+import { makeOptions, makeUrl } from './features/options';
+import { parseResponseData } from './features/parser';
+import { borzoiInterceptors } from './features/globalConfig';
 
-export const borzoi = async (url: string, options?: Partial<BorzoiInputOptions>): Promise<BorzoiResponse> => {
-    const reqIntercs = global.borzoi.requestInterceptors as RequestInterceptor[];
+const borzoi = async (url: string, options?: Partial<BorzoiInputOptions>): Promise<BorzoiResponse> => {
+    const internal = (e: unknown) => {
+        return {
+            data: null,
+            ok: false,
+            refetch: () => borzoi(url, options),
+            internalError: String(e) || true,
+            url,
+        };
+    };
+
     let urlx = url;
     let ox = options;
+    const reqIntercs = borzoiInterceptors.request;
     if (Array.isArray(reqIntercs) && reqIntercs.length > 0) {
         for (const interceptor of reqIntercs) {
             const [urly, oy] = await interceptor(urlx, ox);
@@ -24,20 +33,18 @@ export const borzoi = async (url: string, options?: Partial<BorzoiInputOptions>)
     try {
         response = await fetch(url, opts);
     } catch (e) {
-        logger.error((e as any).toString() || 'Unknown error occured and Borzoi was unable to send a request');
-        return {
-            data: null,
-            ok: false,
-            refetch: () => borzoi(url, options),
-            internalError: true,
-            url,
-        };
+        return internal(e);
     }
 
-    const body = await parseBody(response, opts.ignoreResponseBody);
+    let responseData = {};
+    try {
+        responseData = await parseResponseData(response, opts.ignoreResponseBody, opts.bodyDecoder);
+    } catch (e) {
+        return internal(e);
+    }
 
     let result = {
-        data: body,
+        data: responseData,
         ok: response.ok,
         statusCode: response.status,
         refetch: () => borzoi(url, options),
@@ -48,7 +55,7 @@ export const borzoi = async (url: string, options?: Partial<BorzoiInputOptions>)
         url: response.url,
     } as BorzoiResponse;
 
-    const resIntercs = global.borzoi.responseInterceptors as ResponseInterceptor[];
+    const resIntercs = borzoiInterceptors.response;
     if (Array.isArray(resIntercs) && resIntercs.length > 0) {
         for (const interceptor of resIntercs) {
             result = await interceptor(result);
@@ -58,6 +65,6 @@ export const borzoi = async (url: string, options?: Partial<BorzoiInputOptions>)
     return result;
 };
 
-export { borzoiConfig } from './features/globalConfig';
-export { addBorzoiRequestInterceptor, addBorzoiResponseInterceptor } from './features/interceptors';
+export { borzoiConfig, borzoiInterceptors } from './features/globalConfig';
 export * from './types';
+export default borzoi;

@@ -38,7 +38,7 @@ export type BorzoiResponse = {
     ok: boolean;
     data: any;
     refetch: () => Promise<BorzoiResponse>;
-    internalError: boolean;
+    internalError: string | boolean;
 } & Partial<BorzoiResponseInfo>;
 
 export type BorzoiResponseInfo = {

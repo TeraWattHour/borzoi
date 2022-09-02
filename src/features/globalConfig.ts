@@ -1,29 +1,34 @@
-import { BorzoiGlobalConfig } from '../types';
-import { assureBorzoiGlobals } from '../utils/assureBorzoiGlobals';
+import { BorzoiGlobalConfig, BorzoiInputOptions, RequestInterceptor, ResponseInterceptor } from '../types';
 
-const allowedBorzoiGlobalConfigKeys = ['baseUrl', 'credentials', 'bodyDecoder', 'headers'];
+export let borzoiConfig: Partial<BorzoiGlobalConfig> = {};
 
-export const borzoiGlobalDefaults = ['credentials', 'bodyDecoder'];
+export let borzoiInterceptors = {
+    response: [],
+    request: [],
+} as {
+    response: ResponseInterceptor[];
+    request: RequestInterceptor[];
+};
 
-export const borzoiConfig = (options: Partial<BorzoiGlobalConfig>) => {
-    const keys = Object.keys(options) as [keyof BorzoiGlobalConfig];
+const inheritableGlobalConfigKeys = ['credentials', 'bodyDecoder'];
+const allowedBorzoiGlobalConfigKeys = ['baseUrl', 'credentials', 'bodyDecoder', 'headers'] as const;
 
-    for (const key of keys) {
-        if (!allowedBorzoiGlobalConfigKeys.includes(key)) {
-            delete options[key];
-        }
+export const makeConfig = (options?: Partial<BorzoiInputOptions>): Partial<BorzoiInputOptions> => {
+    let x = borzoiConfig;
+
+    if (!options) {
+        return x;
     }
 
-    assureBorzoiGlobals();
-    global.borzoi.options = options;
-};
-
-type PropType<T, V extends keyof T> = T[V];
-
-export const getBorzoiGlobalValue = (key: keyof BorzoiGlobalConfig): PropType<BorzoiGlobalConfig, typeof key> | null => {
-    return global?.borzoi?.options?.[key] || null;
-};
-
-export const getBorzoiGlobal = (): BorzoiGlobalConfig => {
-    return global?.borzoi?.options || null;
+    for (const entry of Object.entries(x)) {
+        const y = entry[0] as typeof allowedBorzoiGlobalConfigKeys[number];
+        if (!allowedBorzoiGlobalConfigKeys.includes(y) || !inheritableGlobalConfigKeys.includes(y)) {
+            continue;
+        }
+        if (!(options as any)[y]) {
+            continue;
+        }
+        (options as any)[y] = x[y];
+    }
+    return options;
 };
