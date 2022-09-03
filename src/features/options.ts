@@ -1,11 +1,11 @@
-import { borzoiConfig, makeConfig } from './globalConfig';
+import { borzoiConfig, mergeConfig } from './defaults';
 import { BorzoiInputOptions, BorzoiOptions, HeadersType, UrlQuery } from '../types';
 import { isValidUrl } from '../utils/url';
 
 export const makeOptions = (options?: Partial<BorzoiInputOptions>): Partial<BorzoiOptions> => {
     let headers = makeHeaders(options?.headers);
 
-    options = makeConfig(options);
+    options = mergeConfig(options);
 
     if (options.body) {
         if (!headers.get('Content-Type')) {

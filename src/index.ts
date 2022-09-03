@@ -1,7 +1,7 @@
 import { BorzoiInputOptions, BorzoiResponse } from './types';
 import { makeOptions, makeUrl } from './features/options';
 import { parseResponseData } from './features/parser';
-import { borzoiInterceptors } from './features/globalConfig';
+import { borzoiInterceptors } from './features/defaults';
 
 const borzoi = async (url: string, options?: Partial<BorzoiInputOptions>): Promise<BorzoiResponse> => {
     const internal = (e: unknown) => {
@@ -14,22 +14,20 @@ const borzoi = async (url: string, options?: Partial<BorzoiInputOptions>): Promi
         };
     };
 
-    let urlx = url;
-    let ox = options;
     const reqIntercs = borzoiInterceptors.request;
     if (Array.isArray(reqIntercs) && reqIntercs.length > 0) {
         for (const interceptor of reqIntercs) {
-            const [urly, oy] = await interceptor(urlx, ox);
-            ox = oy;
-            urlx = urly;
+            const [interceptedUrl, interceptedOptions] = await interceptor(url, options);
+            url = interceptedUrl;
+            options = interceptedOptions;
         }
     }
 
-    const opts = makeOptions(ox);
+    const opts = makeOptions(options);
 
-    let response: Response;
     url = makeUrl(url, options?.query);
 
+    let response: Response;
     try {
         response = await fetch(url, opts);
     } catch (e) {
@@ -53,6 +51,7 @@ const borzoi = async (url: string, options?: Partial<BorzoiInputOptions>): Promi
         redirected: response.redirected,
         headers: response.headers,
         url: response.url,
+        response,
     } as BorzoiResponse;
 
     const resIntercs = borzoiInterceptors.response;
@@ -65,6 +64,6 @@ const borzoi = async (url: string, options?: Partial<BorzoiInputOptions>): Promi
     return result;
 };
 
-export { borzoiConfig, borzoiInterceptors } from './features/globalConfig';
+export { borzoiConfig, borzoiInterceptors } from './features/defaults';
 export * from './types';
 export default borzoi;

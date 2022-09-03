@@ -47,6 +47,7 @@ export type BorzoiResponseInfo = {
     headers: Headers;
     statusText: string;
     redirected: boolean;
+    response: Response;
     responseType: ResponseType;
 };
 
@@ -63,9 +64,14 @@ export type RequestInterceptor = (
 
 export type ResponseInterceptor = (response: BorzoiResponse) => BorzoiResponse | Promise<BorzoiResponse>;
 
-export type BorzoiGlobalConfig = {
+export type BorzoiDefaultConfig = {
     baseUrl: string;
     credentials: RequestCredentials;
     bodyDecoder: BorzoiDecoder;
     headers: HeadersType;
+};
+
+export type BorzoiInterceptors = {
+    response: ResponseInterceptor[];
+    request: RequestInterceptor[];
 };

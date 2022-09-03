@@ -1,5 +1,5 @@
 {
-    "version": "0.1.23",
+    "version": "0.0.1",
     "license": "MIT",
     "main": "dist/index.js",
     "description": "The simpliest data fetching",
@@ -17,8 +17,7 @@
         "test": "tsdx test",
         "lint": "tsdx lint",
         "size": "size-limit",
-        "local": "tsdx build && npm pack --pack-destination ~",
-        "analyze": "size-limit --why"
+        "local": "tsdx build && npm pack --pack-destination ~"
     },
     "husky": {
         "hooks": {
@@ -33,7 +32,7 @@
         "trailingComma": "es5",
         "tabWidth": 4
     },
-    "name": "borzoi",
+    "name": "@terawatthour/borzoi",
     "author": "TeraWattHour",
     "module": "dist/borzoi.esm.js",
     "size-limit": [
