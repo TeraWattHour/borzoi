@@ -32,7 +32,7 @@
         "trailingComma": "es5",
         "tabWidth": 4
     },
-    "name": "@terawatthour/borzoi",
+    "name": "borzoi",
     "author": "TeraWattHour",
     "module": "dist/borzoi.esm.js",
     "size-limit": [

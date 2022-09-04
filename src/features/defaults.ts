@@ -1,11 +1,11 @@
 import { BorzoiDefaultConfig, BorzoiInputOptions, BorzoiInterceptors } from '../types';
 
-export let borzoiConfig: Partial<BorzoiDefaultConfig> = {
+export const borzoiConfig: Partial<BorzoiDefaultConfig> = {
     bodyDecoder: 'json',
     credentials: 'omit',
 };
 
-export let borzoiInterceptors: BorzoiInterceptors = {
+export const borzoiInterceptors: BorzoiInterceptors = {
     response: [],
     request: [],
 };
@@ -22,11 +22,10 @@ export const mergeConfig = (options?: Partial<BorzoiInputOptions>): Partial<Borz
             continue;
         }
 
-        if (!(options as any)[key]) {
+        if ((options as any)[key]) {
             continue;
         }
         (options as any)[key] = value;
     }
-
     return options;
 };
