@@ -32,7 +32,23 @@ export type UrlQuery =
           [key: string]: string | undefined | null | number;
       };
 
-export type HttpMethod = 'get' | 'post' | 'delete' | 'patch' | 'put' | 'options' | 'trace' | 'connect';
+export type HttpMethod =
+    | 'get'
+    | 'post'
+    | 'delete'
+    | 'patch'
+    | 'put'
+    | 'options'
+    | 'trace'
+    | 'connect'
+    | 'GET'
+    | 'POST'
+    | 'DELETE'
+    | 'PATCH'
+    | 'PUT'
+    | 'OPTIONS'
+    | 'TRACE'
+    | 'CONNECT';
 
 export type BorzoiResponse = {
     ok: boolean;

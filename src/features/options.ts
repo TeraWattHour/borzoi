@@ -1,5 +1,5 @@
 import { borzoiConfig, mergeConfig } from './defaults';
-import { BorzoiInputOptions, BorzoiOptions, HeadersType, UrlQuery } from '../types';
+import { BorzoiInputOptions, BorzoiOptions, HeadersType, HttpMethod, UrlQuery } from '../types';
 import { isValidUrl } from '../utils/url';
 
 export const makeOptions = (options?: Partial<BorzoiInputOptions>): Partial<BorzoiOptions> => {
@@ -17,7 +17,7 @@ export const makeOptions = (options?: Partial<BorzoiInputOptions>): Partial<Borz
 
     return {
         ...options,
-        method: options.method || 'get',
+        method: (options.method || 'GET').toUpperCase() as HttpMethod,
         credentials: options.credentials || 'omit',
         headers,
     };
