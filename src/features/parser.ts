@@ -1,14 +1,6 @@
 import { BorzoiDecoder } from '../types';
 
-export const parseResponseData = async (
-    response: Response,
-    ignore: boolean = false,
-    decoder?: BorzoiDecoder
-): Promise<any | null> => {
-    if (ignore) {
-        return null;
-    }
-
+export const parseResponseData = async (response: Response, decoder?: BorzoiDecoder): Promise<any | null> => {
     if (!decoder) {
         const contentType = response.headers.get('Content-Type');
         if (contentType?.startsWith('application/json')) {

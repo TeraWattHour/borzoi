@@ -24,7 +24,6 @@ const borzoi = async (url: string, options?: Partial<BorzoiInputOptions>): Promi
     }
 
     const opts = makeOptions(options);
-
     url = makeUrl(url, options?.query);
 
     let response: Response;
@@ -34,11 +33,11 @@ const borzoi = async (url: string, options?: Partial<BorzoiInputOptions>): Promi
         return internal(e);
     }
 
-    let responseData = {};
+    let responseData = null;
     try {
-        responseData = await parseResponseData(response, opts.ignoreResponseBody, opts.bodyDecoder);
+        responseData = await parseResponseData(response, opts.bodyDecoder);
     } catch (e) {
-        return internal(e);
+        responseData = null;
     }
 
     let result = {

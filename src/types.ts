@@ -8,7 +8,6 @@ export type BorzoiOptions = {
 } & BorzoiBaseOptions;
 
 type BorzoiBaseOptions = {
-    ignoreResponseBody: boolean;
     bodyDecoder: BorzoiDecoder;
 
     // fetch
