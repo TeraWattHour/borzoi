@@ -3,7 +3,7 @@ import { makeOptions, makeUrl } from './features/options';
 import { parseResponseData } from './features/parser';
 import { borzoiInterceptors } from './features/defaults';
 
-const borzoi = async (url: string, options?: Partial<BorzoiInputOptions>): Promise<BorzoiResponse> => {
+const borzoi = async <T = any>(url: string, options?: Partial<BorzoiInputOptions>): Promise<BorzoiResponse<T>> => {
     const internal = (e: unknown) => {
         return {
             data: null,

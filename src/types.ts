@@ -49,10 +49,10 @@ export type HttpMethod =
     | 'TRACE'
     | 'CONNECT';
 
-export type BorzoiResponse = {
+export type BorzoiResponse<T = any> = {
     ok: boolean;
-    data: any;
-    refetch: () => Promise<BorzoiResponse>;
+    data: T | null;
+    refetch: () => Promise<BorzoiResponse<T>>;
     internalError: string | boolean;
 } & Partial<BorzoiResponseInfo>;
 
