@@ -11,7 +11,9 @@ export const makeOptions = (options?: Partial<BorzoiInputOptions>): Partial<Borz
         if (!headers.get('Content-Type')) {
             const { body, type } = makeBody(options!.body);
             options.body = body;
-            headers.set('Content-Type', type);
+            if (type) {
+                headers.set('Content-Type', type);
+            }
         }
     }
 
@@ -24,26 +26,14 @@ export const makeOptions = (options?: Partial<BorzoiInputOptions>): Partial<Borz
 };
 
 const makeBody = (body: any) => {
-    if (body instanceof URLSearchParams) {
-        return {
-            body,
-            type: 'x-www-form-urlencoded',
-        };
-    }
-    if (body instanceof FormData) {
-        return {
-            body,
-            type: 'multipart/form-data',
-        };
-    }
-    if (typeof body === 'object') {
+    try {
         return {
             body: JSON.stringify(body),
             type: 'application/json',
         };
+    } catch (error) {
+        return { body };
     }
-
-    return { body, type: 'application/json' };
 };
 
 export const makeHeaders = (headers: HeadersType = {}): Headers => {
