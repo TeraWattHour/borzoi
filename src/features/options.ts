@@ -26,6 +26,9 @@ export const makeOptions = (options?: Partial<BorzoiInputOptions>): Partial<Borz
 };
 
 const makeBody = (body: any) => {
+    if (body instanceof FormData || body instanceof URLSearchParams) {
+        return { body };
+    }
     try {
         return {
             body: JSON.stringify(body),
