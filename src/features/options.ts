@@ -33,7 +33,7 @@ const makeBody = (body: any) => {
     if (body instanceof FormData) {
         return {
             body,
-            type: 'form/multipart',
+            type: 'multipart/form-data',
         };
     }
     if (typeof body === 'object') {
