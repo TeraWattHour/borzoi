@@ -7,10 +7,18 @@ test('makes requests including global config', async () => {
     borzoiConfig.headers = {
         string: 'global',
     };
+    borzoiConfig.cache = 'no-cache';
+    borzoiConfig.next = {
+        revalidate: 20,
+    };
 
     const { data, ok } = await borzoi('/todos/1', {
         headers: {
             string: 'local',
+        },
+        cache: 'force-cache',
+        next: {
+            revalidate: 10,
         },
     });
 

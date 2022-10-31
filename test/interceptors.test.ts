@@ -19,8 +19,9 @@ test('intercepts responses', async () => {
 
 test('intercepts request', async () => {
     borzoiInterceptors.request = [
-        (url, options) => {
-            if (url === 'https://jsonplaceholder.typicode.com/posts') {
+        async (url, options) => {
+            if (url === 'intercept me') {
+                url = 'https://jsonplaceholder.typicode.com/posts';
                 options = {
                     method: 'post',
                     body: {
@@ -35,7 +36,7 @@ test('intercepts request', async () => {
         },
     ];
 
-    const { data } = await borzoi('https://jsonplaceholder.typicode.com/posts');
+    const { data } = await borzoi('intercept me');
 
     expect(data).toStrictEqual({
         id: 101,

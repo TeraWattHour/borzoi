@@ -10,7 +10,7 @@ export type BorzoiOptions = {
 type BorzoiBaseOptions = {
     bodyDecoder: BorzoiDecoder;
 
-    // fetch
+    // standard fetch
     body: any;
     method: HttpMethod;
     credentials: RequestCredentials;
@@ -23,6 +23,8 @@ type BorzoiBaseOptions = {
     referrer: string;
     signal: AbortSignal;
     window: null;
+} & {
+    [key: string]: any;
 };
 
 export type UrlQuery =
@@ -75,7 +77,7 @@ export type HeadersType = {
 export type RequestInterceptor = (
     url: string,
     options?: Partial<BorzoiInputOptions>
-) => [string, Partial<BorzoiInputOptions> | undefined] | Promise<[string, Partial<BorzoiInputOptions> | undefined]>;
+) => Promise<[string, Partial<BorzoiInputOptions> | undefined]>;
 
 export type ResponseInterceptor = (response: BorzoiResponse) => BorzoiResponse | Promise<BorzoiResponse>;
 
@@ -84,6 +86,10 @@ export type BorzoiDefaultConfig = {
     credentials: RequestCredentials;
     bodyDecoder: BorzoiDecoder;
     headers: HeadersType;
+    cache: RequestCache;
+    referrerPolicy: ReferrerPolicy;
+} & {
+    [key: string]: any;
 };
 
 export type BorzoiInterceptors = {

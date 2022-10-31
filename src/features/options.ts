@@ -1,20 +1,16 @@
 import { borzoiConfig, mergeConfig } from './defaults';
 import { BorzoiInputOptions, BorzoiOptions, HeadersType, HttpMethod, UrlQuery } from '../types';
-import { isValidUrl } from '../utils/url';
+import { isValidUrl } from '../helpers';
 
 export const makeOptions = (options?: Partial<BorzoiInputOptions>): Partial<BorzoiOptions> => {
     let headers = makeHeaders(options?.headers);
 
     options = mergeConfig(options);
 
-    if (options.body) {
-        if (!headers.get('Content-Type')) {
-            const { body, type } = makeBody(options!.body);
-            options.body = body;
-            if (type) {
-                headers.set('Content-Type', type);
-            }
-        }
+    if (options.body && !headers.get('Content-Type')) {
+        const { body, type } = makeBody(options!.body);
+        options.body = body;
+        type && headers.set('Content-Type', type);
     }
 
     return {
@@ -26,7 +22,7 @@ export const makeOptions = (options?: Partial<BorzoiInputOptions>): Partial<Borz
 };
 
 const makeBody = (body: any) => {
-    if (body instanceof FormData || body instanceof URLSearchParams) {
+    if (body instanceof FormData || body instanceof URLSearchParams || typeof body === 'string') {
         return { body };
     }
     try {
@@ -35,19 +31,15 @@ const makeBody = (body: any) => {
             type: 'application/json',
         };
     } catch (error) {
-        return { body };
+        throw error;
     }
 };
 
 export const makeHeaders = (headers: HeadersType = {}): Headers => {
-    let x = borzoiConfig.headers || {};
-
-    for (const headerName of Object.keys(headers)) {
-        x[headerName] = headers[headerName];
-    }
+    let merged = { ...(borzoiConfig.headers || {}), ...headers };
 
     const h = new Headers();
-    for (const [key, value] of Object.entries(x)) {
+    for (const [key, value] of Object.entries(merged)) {
         if (typeof value === 'number') {
             h.set(key, value.toString());
         }
