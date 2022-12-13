@@ -33,8 +33,9 @@ const borzoi = async <T = any>(url: string, options?: BorzoiRequestOptions): Pro
         } as BorzoiResponse;
     } catch (e) {
         result = {
-            data: null,
+            statusCode: -1,
             ok: false,
+            data: null,
             refetch: () => borzoi(url, options),
             internalError: String(e) || true,
             url,
