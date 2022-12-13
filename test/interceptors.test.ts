@@ -3,8 +3,8 @@ import borzoi, { borzoiInterceptors } from '../src';
 
 test('intercepts responses', async () => {
     borzoiInterceptors.response = [
-        (response) => {
-            if (response.url === 'https://placekitten.com/') {
+        async (response) => {
+            if (response.url === 'https://placekitten.com') {
                 response.data = 'oh yeah';
             }
 
@@ -18,6 +18,7 @@ test('intercepts responses', async () => {
 });
 
 test('intercepts request', async () => {
+    borzoiInterceptors.response = [];
     borzoiInterceptors.request = [
         async (url, options) => {
             if (url === 'intercept me') {

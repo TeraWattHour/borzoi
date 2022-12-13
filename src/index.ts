@@ -1,23 +1,25 @@
-import { BorzoiInputOptions, BorzoiResponse } from './types';
+import { BorzoiRequestOptions, BorzoiResponse } from './types';
 import { makeOptions, makeUrl } from './features/options';
 import { parseResponseData } from './features/parser';
 import { borzoiInterceptors } from './features/defaults';
 
-const borzoi = async <T = any>(url: string, options?: Partial<BorzoiInputOptions>): Promise<BorzoiResponse<T>> => {
+const borzoi = async <T = any>(url: string, options?: BorzoiRequestOptions): Promise<BorzoiResponse<T>> => {
+    let result: BorzoiResponse;
+
     try {
-        const requestInterceptors = Array.isArray(borzoiInterceptors.request) ? borzoiInterceptors.request : [];
-        for (const interceptor of requestInterceptors) {
+        for (const interceptor of borzoiInterceptors.request) {
             [url, options] = await interceptor(url, options);
         }
 
-        const opts = makeOptions(options);
         url = makeUrl(url, options?.query);
 
-        const response = await fetch(url, opts);
+        const fetchOptions = makeOptions(options);
 
-        const responseData = await parseResponseData(response, opts.bodyDecoder);
+        const response = await fetch(url, fetchOptions);
 
-        let result = {
+        const responseData = await parseResponseData(response, fetchOptions.bodyDecoder);
+
+        result = {
             data: responseData,
             ok: response.ok,
             statusCode: response.status,
@@ -29,15 +31,8 @@ const borzoi = async <T = any>(url: string, options?: Partial<BorzoiInputOptions
             refetch: () => borzoi(url, options),
             response,
         } as BorzoiResponse;
-
-        const responseInterceptors = Array.isArray(borzoiInterceptors.response) ? borzoiInterceptors.response : [];
-        for (const interceptor of responseInterceptors) {
-            result = await interceptor(result);
-        }
-
-        return result;
     } catch (e) {
-        return {
+        result = {
             data: null,
             ok: false,
             refetch: () => borzoi(url, options),
@@ -45,6 +40,12 @@ const borzoi = async <T = any>(url: string, options?: Partial<BorzoiInputOptions
             url,
         };
     }
+
+    for (const interceptor of borzoiInterceptors.response) {
+        result = await interceptor(result);
+    }
+
+    return result;
 };
 
 export { borzoiConfig, borzoiInterceptors } from './features/defaults';

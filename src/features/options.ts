@@ -1,11 +1,11 @@
-import { borzoiConfig, mergeConfig } from './defaults';
-import { BorzoiInputOptions, BorzoiOptions, HeadersType, HttpMethod, UrlQuery } from '../types';
+import { borzoiConfig, mergeWithGlobalConfig } from './defaults';
+import { BorzoiOptions, BorzoiRequestOptions, HeadersType, HttpMethod, UrlQuery } from '../types';
 import { isValidUrl } from '../helpers';
 
-export const makeOptions = (options?: Partial<BorzoiInputOptions>): Partial<BorzoiOptions> => {
-    let headers = makeHeaders(options?.headers);
+export const makeOptions = (options?: BorzoiRequestOptions): BorzoiOptions => {
+    let headers = makeHeaders(options?.headers || undefined);
 
-    options = mergeConfig(options);
+    options = mergeWithGlobalConfig(options);
 
     if (options.body && !headers.get('Content-Type')) {
         const { body, type } = makeBody(options!.body);
@@ -13,8 +13,14 @@ export const makeOptions = (options?: Partial<BorzoiInputOptions>): Partial<Borz
         type && headers.set('Content-Type', type);
     }
 
+    let nonNullableOptions: BorzoiOptions = {};
+
+    for (const option in options) {
+        nonNullableOptions[option] = options[option] || undefined;
+    }
+
     return {
-        ...options,
+        ...nonNullableOptions,
         method: (options.method || 'GET').toUpperCase() as HttpMethod,
         credentials: options.credentials || 'omit',
         headers,
@@ -51,7 +57,7 @@ export const makeHeaders = (headers: HeadersType = {}): Headers => {
     return h;
 };
 
-export const makeUrl = (url: string, query?: UrlQuery): string => {
+export const makeUrl = (url: string, query?: UrlQuery | null): string => {
     if (!isValidUrl(url)) {
         url = (borzoiConfig.baseUrl || '') + url;
     }

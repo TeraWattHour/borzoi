@@ -1,4 +1,4 @@
-import { BorzoiDefaultConfig, BorzoiInputOptions, BorzoiInterceptors } from '../types';
+import { BorzoiDefaultConfig, BorzoiInterceptors, BorzoiRequestOptions } from '../types';
 import { isObject } from '../helpers';
 
 export const borzoiConfig: Partial<BorzoiDefaultConfig> = {
@@ -13,7 +13,7 @@ export const borzoiInterceptors: BorzoiInterceptors = {
 
 const allowedDefaultConfigKeys = ['baseUrl', 'cache', 'next', 'credentials', 'bodyDecoder', 'headers', 'referrerPolicy'];
 
-export const mergeConfig = (options: Partial<BorzoiInputOptions> = {}): Partial<BorzoiInputOptions> => {
+export const mergeWithGlobalConfig = (options: BorzoiRequestOptions = {}): BorzoiRequestOptions => {
     for (const [key, value] of Object.entries(borzoiConfig)) {
         if (!allowedDefaultConfigKeys.includes(key)) {
             continue;

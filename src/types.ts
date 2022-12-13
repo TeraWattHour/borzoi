@@ -1,11 +1,19 @@
-export type BorzoiInputOptions = {
-    query: UrlQuery;
-    headers: HeadersType;
-} & BorzoiBaseOptions;
+type NullableObject<T> = {
+    [N in keyof T]?: T[N] | null;
+};
 
-export type BorzoiOptions = {
-    headers: Headers;
-} & BorzoiBaseOptions;
+export type BorzoiRequestOptions = NullableObject<
+    {
+        query: UrlQuery;
+        headers: HeadersType;
+    } & BorzoiBaseOptions
+>;
+
+export type BorzoiOptions = Partial<
+    {
+        headers: Headers;
+    } & BorzoiBaseOptions
+>;
 
 type BorzoiBaseOptions = {
     bodyDecoder: BorzoiDecoder;
@@ -76,10 +84,10 @@ export type HeadersType = {
 
 export type RequestInterceptor = (
     url: string,
-    options?: Partial<BorzoiInputOptions>
-) => Promise<[string, Partial<BorzoiInputOptions> | undefined]>;
+    options?: BorzoiRequestOptions
+) => Promise<[string, BorzoiRequestOptions | undefined]>;
 
-export type ResponseInterceptor = (response: BorzoiResponse) => BorzoiResponse | Promise<BorzoiResponse>;
+export type ResponseInterceptor = (response: BorzoiResponse) => Promise<BorzoiResponse>;
 
 export type BorzoiDefaultConfig = {
     baseUrl: string;
