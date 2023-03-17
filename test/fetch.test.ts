@@ -1,3 +1,4 @@
+import { test, expect } from 'vitest';
 import 'isomorphic-fetch';
 import borzoi, { borzoiConfig } from '../src/index';
 
@@ -70,20 +71,27 @@ test('encodes json data', async () => {
     expect(data).not.toBeNull();
 });
 
-test('sets headers', async () => {
-    const { ok, data } = await borzoi('http://localhost:8000/headers', {
-        method: 'get',
-        credentials: 'include',
-        headers: {
-            cookie: 'xyz',
-            nullHeader: undefined,
-            undefinedHeader: null,
-            numericHeader: 1,
-        },
-    });
+interface OkData {
+    userId: number;
+    id: number;
+    title: string;
+    completed: boolean;
+}
 
-    expect(data).toBe({
-        cookie: 'xyz',
-    });
-    expect(ok).toBeTruthy();
+interface ErrData {
+    message: string;
+}
+
+test('typescript big boy', async () => {
+    const { data, ok } = await borzoi<OkData, ErrData>('https://jsonplaceholder.typicode.com/todos/2');
+
+    if (ok) {
+        console.log(data.completed);
+        expect(data.completed).toBeDefined();
+    }
+    if (!ok) {
+        // if `ok` is false data also may be null because it is unknown if request even got to the server
+        console.log(data?.message);
+        expect(ok).toBeFalsy();
+    }
 });

@@ -4,7 +4,6 @@
 
 Borzoi is a micro Fetch API wrapper that allows you to write less code to achieve better results.
 
-Since Borzoi is currently in pre-alpha, expect changes that may completely change how the library functions.
 <br>
 <br>
 
