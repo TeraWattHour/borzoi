@@ -8,19 +8,28 @@ export const makeOptions = (options?: Partial<BorzoiInputOptions>): Partial<Borz
     options = mergeConfig(options);
 
     if (options.body && !headers.get('Content-Type')) {
-        const { body, type } = makeBody(options!.body);
+        const { body, type } = makeBody(options.body);
         options.body = body;
         type && headers.set('Content-Type', type);
     }
 
+    // expect all method verbs to be in uppercase, fallback to `GET`
+    if (!options.method) {
+        options.method = 'GET';
+    }
+    options.method = options.method.toUpperCase() as HttpMethod;
+
+    if (!options.credentials) {
+        options.credentials = 'omit';
+    }
+
     return {
         ...options,
-        method: (options.method || 'GET').toUpperCase() as HttpMethod,
-        credentials: options.credentials || 'omit',
         headers,
     };
 };
 
+// tries to parse JSON body and sets according header
 const makeBody = (body: any) => {
     if (body instanceof FormData || body instanceof URLSearchParams || typeof body === 'string') {
         return { body };
@@ -31,45 +40,55 @@ const makeBody = (body: any) => {
             type: 'application/json',
         };
     } catch (error) {
-        throw error;
+        return { body };
     }
 };
 
+// merges default headers with provided ones,
 export const makeHeaders = (headers: HeadersType = {}): Headers => {
-    let merged = { ...(borzoiConfig.headers || {}), ...headers };
+    const merged = borzoiConfig.headers || {};
 
-    const h = new Headers();
-    for (const [key, value] of Object.entries(merged)) {
-        if (typeof value === 'number') {
-            h.set(key, value.toString());
+    const httpHeaders = new Headers();
+    for (let [key, value] of Object.entries(merged)) {
+        if (typeof headers[key] !== 'undefined') {
+            value = headers[key];
         }
-        if (typeof value === 'string') {
-            h.set(key, value);
+
+        if (typeof value === 'undefined' || value == null || (typeof value !== 'string' && typeof value !== 'number')) {
+            continue;
         }
+
+        // only strings and numbers get to this point
+        httpHeaders.set(key, String(value));
     }
 
-    return h;
+    return httpHeaders;
 };
 
+// if provided url is unvalid, prepends baseUrl from global config, appends stringified query
 export const makeUrl = (url: string, query?: UrlQuery): string => {
     if (!isValidUrl(url)) {
         url = (borzoiConfig.baseUrl || '') + url;
     }
 
-    if (query && query instanceof URLSearchParams) {
-        url += `?${query.toString()}`;
-    } else if (query) {
-        const x = new URLSearchParams();
-        for (const [key, value] of Object.entries(query)) {
-            if (typeof value === 'number') {
-                x.set(key, value.toString());
-            }
-            if (typeof value === 'string') {
-                x.set(key, value);
-            }
-        }
-        url += `?${x.toString()}`;
+    if (!query) {
+        return url;
     }
 
-    return url;
+    if (query instanceof URLSearchParams) {
+        return url + `?${query.toString()}`;
+    }
+
+    const params = new URLSearchParams();
+    for (const [key, value] of Object.entries(query)) {
+        if (Array.isArray(value)) {
+            value.forEach((v: string | number) => {
+                params.append(key, String(v));
+            });
+        } else if (typeof value !== 'undefined' && value != null) {
+            params.append(key, String(value));
+        }
+    }
+
+    return url + `?${params.toString()}`;
 };
