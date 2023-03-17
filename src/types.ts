@@ -30,7 +30,7 @@ type BorzoiBaseOptions = {
 export type UrlQuery =
     | URLSearchParams
     | {
-          [key: string]: string | undefined | null | number;
+          [key: string]: string | number | string[] | number[] | undefined | null;
       };
 
 export type HttpMethod =
@@ -51,14 +51,21 @@ export type HttpMethod =
     | 'TRACE'
     | 'CONNECT';
 
-export type BorzoiResponse<T = any> = {
-    ok: boolean;
-    data: T | null;
-    refetch: () => Promise<BorzoiResponse<T>>;
+export type BorzoiResponse<OkData = any, ErrData = any> = (
+    | {
+          ok: true;
+          data: OkData;
+      }
+    | {
+          ok: false;
+          data: ErrData | null;
+      }
+) & {
+    refetch: () => Promise<BorzoiResponse<OkData, ErrData>>;
     internalError: string | boolean;
-} & Partial<BorzoiResponseInfo>;
+} & Partial<GenericResponseInfo>;
 
-export type BorzoiResponseInfo = {
+export type GenericResponseInfo = {
     statusCode: number;
     url: string;
     headers: Headers;
@@ -71,7 +78,7 @@ export type BorzoiResponseInfo = {
 export type BorzoiDecoder = 'json' | 'form-data' | 'blob' | 'text' | 'array-buffer';
 
 export type HeadersType = {
-    [key: string]: string | null | undefined | number;
+    [key: string]: string | number | undefined | null;
 };
 
 export type RequestInterceptor = (

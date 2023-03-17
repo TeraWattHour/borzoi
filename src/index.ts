@@ -3,7 +3,10 @@ import { makeOptions, makeUrl } from './features/options';
 import { parseResponseData } from './features/parser';
 import { borzoiInterceptors } from './features/defaults';
 
-const borzoi = async <T = any>(url: string, options?: Partial<BorzoiInputOptions>): Promise<BorzoiResponse<T>> => {
+const borzoi = async <OkData = any, ErrData = any>(
+    url: string,
+    options?: Partial<BorzoiInputOptions>
+): Promise<BorzoiResponse<OkData, ErrData>> => {
     try {
         const requestInterceptors = Array.isArray(borzoiInterceptors.request) ? borzoiInterceptors.request : [];
         for (const interceptor of requestInterceptors) {
@@ -28,6 +31,7 @@ const borzoi = async <T = any>(url: string, options?: Partial<BorzoiInputOptions
             url: response.url,
             refetch: () => borzoi(url, options),
             response,
+            internalError: false,
         } as BorzoiResponse;
 
         const responseInterceptors = Array.isArray(borzoiInterceptors.response) ? borzoiInterceptors.response : [];
@@ -38,8 +42,8 @@ const borzoi = async <T = any>(url: string, options?: Partial<BorzoiInputOptions
         return result;
     } catch (e) {
         return {
-            data: null,
             ok: false,
+            data: null,
             refetch: () => borzoi(url, options),
             internalError: String(e) || true,
             url,
