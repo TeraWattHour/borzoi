@@ -1,20 +1,29 @@
-import { BorzoiInputOptions, BorzoiResponse } from './types';
+import { BorzoiInputOptions, BorzoiResponse, PartialAndNullable } from './types';
 import { makeOptions, makeUrl } from './features/options';
 import { parseResponseData } from './features/parser';
 import { borzoiInterceptors } from './features/defaults';
 
 const borzoi = async <OkData = any, ErrData = any>(
     url: string,
-    options?: Partial<BorzoiInputOptions>
+    options?: PartialAndNullable<BorzoiInputOptions>
 ): Promise<BorzoiResponse<OkData, ErrData>> => {
     try {
-        const requestInterceptors = Array.isArray(borzoiInterceptors.request) ? borzoiInterceptors.request : [];
-        for (const interceptor of requestInterceptors) {
-            [url, options] = await interceptor(url, options);
+        let partialOptions: Partial<BorzoiInputOptions> | undefined = {};
+        for (const [key, value] of Object.entries(options || {})) {
+            if (value == null) {
+                partialOptions[key] = undefined;
+            } else {
+                partialOptions[key] = value;
+            }
         }
 
-        const opts = makeOptions(options);
-        url = makeUrl(url, options?.query);
+        const requestInterceptors = Array.isArray(borzoiInterceptors.request) ? borzoiInterceptors.request : [];
+        for (const interceptor of requestInterceptors) {
+            [url, partialOptions] = await interceptor(url, partialOptions);
+        }
+
+        const opts = makeOptions(partialOptions);
+        url = makeUrl(url, partialOptions?.query);
 
         const response = await fetch(url, opts);
 

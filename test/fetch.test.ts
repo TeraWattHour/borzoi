@@ -60,6 +60,7 @@ test('can refetch request', async () => {
 test('encodes json data', async () => {
     const { data, ok } = await borzoi('/posts', {
         method: 'post',
+        headers: null,
         body: {
             title: 'foo',
             body: 'bar',

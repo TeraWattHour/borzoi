@@ -103,3 +103,7 @@ export type BorzoiInterceptors = {
     response: ResponseInterceptor[];
     request: RequestInterceptor[];
 };
+
+export type PartialAndNullable<T> = {
+    [K in keyof T]?: T[K] | null | undefined;
+};
