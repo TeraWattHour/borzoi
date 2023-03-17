@@ -1,5 +1,5 @@
 {
-    "version": "0.0.8",
+    "version": "0.0.11",
     "license": "MIT",
     "main": "dist/index.js",
     "description": "The simpliest data fetching",
@@ -14,7 +14,7 @@
     "scripts": {
         "start": "tsdx watch",
         "build": "tsdx build",
-        "test": "tsdx test",
+        "test": "vitest",
         "lint": "tsdx lint",
         "size": "size-limit",
         "local": "tsdx build && npm pack --pack-destination ~"
@@ -48,12 +48,16 @@
     "devDependencies": {
         "@size-limit/preset-small-lib": "^7.0.8",
         "@types/isomorphic-fetch": "^0.0.36",
+        "eslint": "^8.36.0",
+        "eslint-plugin-unused-imports": "^2.0.0",
         "husky": "^8.0.1",
         "isomorphic-fetch": "^3.0.0",
         "size-limit": "^7.0.8",
         "tsdx": "^0.14.1",
         "tslib": "^2.4.0",
-        "typescript": "^3.9.10"
+        "typescript": "^3.9.10",
+        "vite": "^4.2.0",
+        "vitest": "^0.29.3"
     },
     "repository": {
         "type": "git",

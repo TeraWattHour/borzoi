@@ -1,0 +1,12 @@
+{
+    "extends": ["eslint:recommended", "plugin:@typescript-eslint/recommended"],
+    "plugins": ["@typescript-eslint", "unused-imports"],
+    "parser": "@typescript-eslint/parser",
+    "root": true,
+    "rules": {
+        "unused-imports/no-unused-imports": "error",
+        "@typescript-eslint/no-explicit-any": "off",
+        "prefer-const": "off",
+        "@typescript-eslint/no-non-null-assertion": "off"
+    }
+}
