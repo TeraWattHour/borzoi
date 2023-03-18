@@ -1,16 +1,10 @@
-export type BorzoiInputOptions = {
-    query: UrlQuery;
-    headers: HeadersType;
-} & BorzoiBaseOptions;
+export type BorzoiRequestOptions = PartialAndNullable<BorzoiOptions>;
 
 export type BorzoiOptions = {
-    headers: Headers;
-} & BorzoiBaseOptions;
-
-type BorzoiBaseOptions = {
+    query: UrlQuery;
+    headers: BorzoiHeaders;
     bodyDecoder: BorzoiDecoder;
 
-    // standard fetch
     body: any;
     method: HttpMethod;
     credentials: RequestCredentials;
@@ -23,7 +17,6 @@ type BorzoiBaseOptions = {
     referrer: string;
     signal: AbortSignal;
     window: null;
-} & {
     [key: string]: any;
 };
 
@@ -77,32 +70,31 @@ export type GenericResponseInfo = {
 
 export type BorzoiDecoder = 'json' | 'form-data' | 'blob' | 'text' | 'array-buffer';
 
-export type HeadersType = {
+export type BorzoiHeaders = {
     [key: string]: string | number | undefined | null;
 };
-
-export type RequestInterceptor = (
-    url: string,
-    options?: Partial<BorzoiInputOptions>
-) => Promise<[string, Partial<BorzoiInputOptions> | undefined]>;
-
-export type ResponseInterceptor = (response: BorzoiResponse) => BorzoiResponse | Promise<BorzoiResponse>;
 
 export type BorzoiDefaultConfig = {
     baseUrl: string;
     credentials: RequestCredentials;
     bodyDecoder: BorzoiDecoder;
-    headers: HeadersType;
+    headers: BorzoiHeaders;
     cache: RequestCache;
     referrerPolicy: ReferrerPolicy;
-} & {
     [key: string]: any;
 };
 
 export type BorzoiInterceptors = {
-    response: ResponseInterceptor[];
-    request: RequestInterceptor[];
+    response: BorzoiResponseInterceptor[];
+    request: BorzoiRequestInterceptor[];
 };
+
+export type BorzoiRequestInterceptor = (
+    url: string,
+    options?: Partial<BorzoiOptions>
+) => [string, Partial<BorzoiOptions | undefined>] | Promise<[string, Partial<BorzoiOptions | undefined>]>;
+
+export type BorzoiResponseInterceptor = (response: BorzoiResponse) => BorzoiResponse | Promise<BorzoiResponse>;
 
 export type PartialAndNullable<T> = {
     [K in keyof T]?: T[K] | null | undefined;

@@ -1,33 +1,31 @@
-import { BorzoiInputOptions, BorzoiResponse, PartialAndNullable } from './types';
-import { makeOptions, makeUrl } from './features/options';
+import { BorzoiOptions, BorzoiRequestOptions, BorzoiResponse } from './types';
+import { makeOptions, makeRequestInit, makeUrl } from './features/options';
 import { parseResponseData } from './features/parser';
 import { borzoiInterceptors } from './features/defaults';
 
 const borzoi = async <OkData = any, ErrData = any>(
     url: string,
-    options?: PartialAndNullable<BorzoiInputOptions>
+    opts?: BorzoiRequestOptions
 ): Promise<BorzoiResponse<OkData, ErrData>> => {
     try {
-        let partialOptions: Partial<BorzoiInputOptions> | undefined = {};
-        for (const [key, value] of Object.entries(options || {})) {
-            if (value == null) {
-                partialOptions[key] = undefined;
-            } else {
-                partialOptions[key] = value;
-            }
+        let options: Partial<BorzoiOptions> = {};
+        for (const [key, value] of Object.entries(opts || {})) {
+            options[key] = value || undefined;
         }
+
+        options = makeOptions(options);
+        url = makeUrl(url, options?.query);
 
         const requestInterceptors = Array.isArray(borzoiInterceptors.request) ? borzoiInterceptors.request : [];
         for (const interceptor of requestInterceptors) {
-            [url, partialOptions] = await interceptor(url, partialOptions);
+            const [interceptedUrl, interceptedOptions] = await interceptor(url, options);
+            url = interceptedUrl;
+            options = interceptedOptions || {};
         }
 
-        const opts = makeOptions(partialOptions);
-        url = makeUrl(url, partialOptions?.query);
+        const response = await fetch(url, makeRequestInit(options));
 
-        const response = await fetch(url, opts);
-
-        const responseData = await parseResponseData(response, opts.bodyDecoder);
+        const responseData = await parseResponseData(response, options.bodyDecoder);
 
         let result = {
             data: responseData,
@@ -38,7 +36,7 @@ const borzoi = async <OkData = any, ErrData = any>(
             redirected: response.redirected,
             headers: response.headers,
             url: response.url,
-            refetch: () => borzoi(url, options),
+            refetch: () => borzoi(url, opts),
             response,
             internalError: false,
         } as BorzoiResponse;
@@ -53,7 +51,7 @@ const borzoi = async <OkData = any, ErrData = any>(
         return {
             ok: false,
             data: null,
-            refetch: () => borzoi(url, options),
+            refetch: () => borzoi(url, opts),
             internalError: String(e) || true,
             url,
         };

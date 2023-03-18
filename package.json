@@ -1,5 +1,5 @@
 {
-    "version": "0.0.12",
+    "version": "0.0.13",
     "license": "MIT",
     "main": "dist/index.js",
     "description": "The simpliest data fetching",
@@ -47,11 +47,9 @@
     ],
     "devDependencies": {
         "@size-limit/preset-small-lib": "^7.0.8",
-        "@types/isomorphic-fetch": "^0.0.36",
         "eslint": "^8.36.0",
         "eslint-plugin-unused-imports": "^2.0.0",
         "husky": "^8.0.1",
-        "isomorphic-fetch": "^3.0.0",
         "size-limit": "^7.0.8",
         "tsdx": "^0.14.1",
         "tslib": "^2.4.0",

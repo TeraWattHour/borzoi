@@ -1,5 +1,4 @@
 import { test, expect } from 'vitest';
-import 'isomorphic-fetch';
 import borzoi, { borzoiInterceptors } from '../src';
 
 test('intercepts requests', async () => {

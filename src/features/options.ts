@@ -1,16 +1,24 @@
-import { borzoiConfig, mergeConfig } from './defaults';
-import { BorzoiInputOptions, BorzoiOptions, HeadersType, HttpMethod, UrlQuery } from '../types';
+import { borzoiConfig, mergeOptions, mergeHeaders } from './defaults';
+import { BorzoiOptions, BorzoiHeaders, HttpMethod, UrlQuery } from '../types';
 import { isValidUrl } from '../helpers';
 
-export const makeOptions = (options?: Partial<BorzoiInputOptions>): Partial<BorzoiOptions> => {
-    let headers = makeHeaders(options?.headers);
+export const makeRequestInit = (borzoiOptions: Partial<BorzoiOptions> = {}): RequestInit => {
+    return {
+        ...borzoiOptions,
+        headers: makeHttpHeaders(borzoiOptions.headers),
+    };
+};
 
-    options = mergeConfig(options);
+export const makeOptions = (options: Partial<BorzoiOptions> = {}): Partial<BorzoiOptions> => {
+    options.headers = mergeHeaders(options.headers);
+    options = mergeOptions(options);
 
-    if (options.body && !headers.get('Content-Type')) {
+    if (options.body && !options.headers!['Content-Type']) {
         const { body, type } = makeBody(options.body);
         options.body = body;
-        type && headers.set('Content-Type', type);
+        if (type) {
+            options.headers!['Content-Type'] = type;
+        }
     }
 
     // expect all method verbs to be in uppercase, fallback to `GET`
@@ -23,10 +31,7 @@ export const makeOptions = (options?: Partial<BorzoiInputOptions>): Partial<Borz
         options.credentials = 'omit';
     }
 
-    return {
-        ...options,
-        headers,
-    };
+    return options;
 };
 
 // tries to parse JSON body and sets according header
@@ -45,20 +50,14 @@ const makeBody = (body: any) => {
 };
 
 // merges default headers with provided ones,
-export const makeHeaders = (headers: HeadersType = {}): Headers => {
-    const merged = borzoiConfig.headers || {};
-
+export const makeHttpHeaders = (headers: BorzoiHeaders = {}): Headers => {
     const httpHeaders = new Headers();
-    for (let [key, value] of Object.entries(merged)) {
-        if (typeof headers[key] !== 'undefined') {
-            value = headers[key];
-        }
-
-        if (typeof value === 'undefined' || value == null || (typeof value !== 'string' && typeof value !== 'number')) {
+    for (let [key, value] of Object.entries(headers)) {
+        if (typeof value === 'undefined' || value == null) {
             continue;
         }
 
-        // only strings and numbers get to this point
+        // only strings and numbers get to this point so String constructor is fine
         httpHeaders.set(key, String(value));
     }
 

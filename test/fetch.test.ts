@@ -1,5 +1,4 @@
 import { test, expect } from 'vitest';
-import 'isomorphic-fetch';
 import borzoi, { borzoiConfig } from '../src/index';
 
 test('makes requests including global config', async () => {
