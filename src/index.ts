@@ -59,7 +59,7 @@ const borzoi = async <OkData = any, ErrData = any>(
     }
 
     try {
-        result.data = parseResponseData(response, options.bodyDecoder);
+        result.data = await parseResponseData(response, options.bodyDecoder);
     } catch (e) {
         result.data = null;
     }
