@@ -16,18 +16,25 @@ export const parseResponseData = async (response: Response, decoder?: BorzoiDeco
         }
     }
 
-    switch (decoder) {
-        case 'json':
-            return await response.json();
-        case 'array-buffer':
-            return await response.arrayBuffer();
-        case 'blob':
-            return await response.blob();
-        case 'form-data':
-            return await response.formData();
-        case 'text':
-            return await response.text();
-        default:
-            return await response.json();
+    try {
+        switch (decoder) {
+            case 'json':
+                return await response.json();
+            case 'array-buffer':
+                return await response.arrayBuffer();
+            case 'blob':
+                return await response.blob();
+            case 'form-data':
+                return await response.formData();
+            case 'text':
+                return await response.text();
+            default:
+                return await response.json();
+        }
+    } catch (error) {
+        if (!decoder) {
+            return null;
+        }
+        throw error;
     }
 };
