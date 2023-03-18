@@ -1,6 +1,6 @@
 import { BorzoiDecoder } from '../types';
 
-export const parseResponseData = async (response: Response, decoder?: BorzoiDecoder): Promise<any | null> => {
+export const parseResponseData = async (response: Response, decoder?: BorzoiDecoder): Promise<any> => {
     if (!decoder) {
         const contentType = response.headers.get('Content-Type');
         if (contentType?.startsWith('application/json')) {
@@ -16,25 +16,18 @@ export const parseResponseData = async (response: Response, decoder?: BorzoiDeco
         }
     }
 
-    try {
-        switch (decoder) {
-            case 'json':
-                return await response.json();
-            case 'array-buffer':
-                return await response.arrayBuffer();
-            case 'blob':
-                return await response.blob();
-            case 'form-data':
-                return await response.formData();
-            case 'text':
-                return await response.text();
-            default:
-                return await response.json();
-        }
-    } catch (error) {
-        if (!decoder) {
-            return null;
-        }
-        throw error;
+    switch (decoder) {
+        case 'json':
+            return await response.json();
+        case 'array-buffer':
+            return await response.arrayBuffer();
+        case 'blob':
+            return await response.blob();
+        case 'form-data':
+            return await response.formData();
+        case 'text':
+            return await response.text();
+        default:
+            return await response.json();
     }
 };
